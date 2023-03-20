@@ -288,7 +288,7 @@ func (r *runtime) InstantiateModule(
 	}
 
 	// Instantiate the module.
-	mod, err = r.store.Instantiate(ctx, code.module, name, sysCtx, code.typeIDs)
+	mod, err = r.store.Instantiate(ctx, code.module, name, sysCtx, code.typeIDs, config.cost)
 	if err != nil {
 		// If there was an error, don't leak the compiled module.
 		if code.closeWithModule {

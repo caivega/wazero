@@ -900,6 +900,19 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	bodyLen := uint64(len(body))
 	for frame.pc < bodyLen {
 		op := body[frame.pc]
+		if callCtx.CostEnabled {
+			oc, ok := wazeroir.OperationCost[op.kind]
+			if !ok {
+				oc = 1
+			}
+			rc := callCtx.Cost - oc
+			if rc < 0 {
+				callCtx.Cost = rc
+				panic(wasmruntime.ErrRuntimeOutOfCost)
+			} else {
+				callCtx.Cost = rc
+			}
+		}
 		// TODO: add description of each operation/case
 		// on, for example, how many args are used,
 		// how the stack is modified, etc.

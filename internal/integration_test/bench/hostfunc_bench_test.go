@@ -222,5 +222,5 @@ func setupHostCallBench(requireNoError func(error)) *wasm.ModuleInstance {
 
 func linkModuleToEngine(module *wasm.ModuleInstance, me wasm.ModuleEngine) {
 	module.Engine = me
-	module.CallCtx = wasm.NewCallContext(nil, module, nil)
+	module.CallCtx = wasm.NewCallContext(nil, module, nil, -1)
 }

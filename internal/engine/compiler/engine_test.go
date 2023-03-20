@@ -267,7 +267,7 @@ func TestCompiler_SliceAllocatedOnHeap(t *testing.T) {
 	typeIDs, err := s.GetFunctionTypeIDs(hm.TypeSection)
 	require.NoError(t, err)
 
-	_, err = s.Instantiate(testCtx, hm, hostModuleName, nil, typeIDs)
+	_, err = s.Instantiate(testCtx, hm, hostModuleName, nil, typeIDs, -1)
 	require.NoError(t, err)
 
 	const stackCorruption = "value_stack_corruption"
@@ -326,7 +326,7 @@ func TestCompiler_SliceAllocatedOnHeap(t *testing.T) {
 	typeIDs, err = s.GetFunctionTypeIDs(m.TypeSection)
 	require.NoError(t, err)
 
-	mi, err := s.Instantiate(testCtx, m, t.Name(), nil, typeIDs)
+	mi, err := s.Instantiate(testCtx, m, t.Name(), nil, typeIDs, -1)
 	require.NoError(t, err)
 
 	for _, fnName := range []string{stackCorruption, callStackCorruption} {

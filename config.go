@@ -149,6 +149,9 @@ type RuntimeConfig interface {
 	// When the invocations of api.Function are closed due to this, sys.ExitError is raised to the callers and
 	// the api.Module from which the functions are derived is made closed.
 	WithCloseOnContextDone(bool) RuntimeConfig
+
+	// WithCost
+	WithCost(int64) RuntimeConfig
 }
 
 // NewRuntimeConfig returns a RuntimeConfig using the compiler if it is supported in this environment,
@@ -169,6 +172,7 @@ type runtimeConfig struct {
 	cache                 CompilationCache
 	storeCustomSections   bool
 	ensureTermination     bool
+	cost                  int64
 }
 
 // engineLessConfig helps avoid copy/pasting the wrong defaults.
@@ -272,6 +276,12 @@ func (c *runtimeConfig) WithDebugInfoEnabled(dwarfEnabled bool) RuntimeConfig {
 func (c *runtimeConfig) WithCustomSections(storeCustomSections bool) RuntimeConfig {
 	ret := c.clone()
 	ret.storeCustomSections = storeCustomSections
+	return ret
+}
+
+func (c *runtimeConfig) WithCost(cost int64) RuntimeConfig {
+	ret := c.clone()
+	ret.cost = cost
 	return ret
 }
 
@@ -593,6 +603,9 @@ type ModuleConfig interface {
 	// Note: The caller is responsible to close any io.Reader they supply: It
 	// is not closed on api.Module Close.
 	WithRandSource(io.Reader) ModuleConfig
+
+	// Cost
+	WithCost(int64) ModuleConfig
 }
 
 type moduleConfig struct {
@@ -615,6 +628,8 @@ type moduleConfig struct {
 	environKeys map[string]int
 	// fsConfig is the file system configuration for ABI like WASI.
 	fsConfig FSConfig
+	// cost
+	cost int64
 }
 
 // NewModuleConfig returns a ModuleConfig that can be used for configuring module instantiation.
@@ -622,6 +637,7 @@ func NewModuleConfig() ModuleConfig {
 	return &moduleConfig{
 		startFunctions: []string{"_start"},
 		environKeys:    map[string]int{},
+		cost:           -1,
 	}
 }
 
@@ -770,6 +786,12 @@ func (c *moduleConfig) WithSysNanosleep() ModuleConfig {
 func (c *moduleConfig) WithRandSource(source io.Reader) ModuleConfig {
 	ret := c.clone()
 	ret.randSource = source
+	return ret
+}
+
+func (c *moduleConfig) WithCost(cost int64) ModuleConfig {
+	ret := c.clone()
+	ret.cost = cost
 	return ret
 }
 
