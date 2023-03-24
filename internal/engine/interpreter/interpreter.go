@@ -898,6 +898,8 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	ce.pushFrame(frame)
 	body := frame.f.parent.body
 	bodyLen := uint64(len(body))
+
+	cost := ctx.Value("cost").(*api.Cost)
 	for frame.pc < bodyLen {
 		op := body[frame.pc]
 		if callCtx.CostEnabled {
@@ -908,9 +910,11 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			rc := callCtx.Cost - oc
 			if rc < 0 {
 				callCtx.Cost = rc
+				cost.SetCost(rc)
 				panic(wasmruntime.ErrRuntimeOutOfCost)
 			} else {
 				callCtx.Cost = rc
+				cost.SetCost(rc)
 			}
 		}
 		// TODO: add description of each operation/case
