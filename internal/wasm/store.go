@@ -289,7 +289,6 @@ func (s *Store) Instantiate(
 	name string,
 	sys *internalsys.Context,
 	typeIDs []FunctionTypeID,
-	cost int64,
 ) (*CallContext, error) {
 	// Collect any imported modules to avoid locking the store too long.
 	importedModuleNames := map[string]struct{}{}
@@ -310,7 +309,7 @@ func (s *Store) Instantiate(
 	}
 
 	// Instantiate the module and add it to the store so that other modules can import it.
-	if callCtx, err := s.instantiate(ctx, module, name, sys, importedModules, typeIDs, cost); err != nil {
+	if callCtx, err := s.instantiate(ctx, module, name, sys, importedModules, typeIDs); err != nil {
 		_ = s.deleteModule(name)
 		return nil, err
 	} else {
@@ -331,7 +330,6 @@ func (s *Store) instantiate(
 	sysCtx *internalsys.Context,
 	modules map[string]*ModuleInstance,
 	typeIDs []FunctionTypeID,
-	cost int64,
 ) (*CallContext, error) {
 	importedFunctions, importedGlobals, importedTables, importedMemory, err := resolveImports(module, modules)
 	if err != nil {
@@ -379,7 +377,7 @@ func (s *Store) instantiate(
 	m.applyTableInits(tables, tableInit)
 
 	// Compile the default context for calls to this module.
-	callCtx := NewCallContext(s, m, sysCtx, cost)
+	callCtx := NewCallContext(s, m, sysCtx)
 	m.CallCtx = callCtx
 
 	// Execute the start function.

@@ -1,15 +1,21 @@
 package api
 
 type Cost struct {
-	cost int64
+	Enabled bool
+	cost    int64
 }
 
 func NewCost() *Cost {
-	return &Cost{cost: -1}
+	return &Cost{}
 }
 
-func (c *Cost) SetCost(cost int64) {
-	c.cost = cost
+func NewCostWith(cost int64) *Cost {
+	return &Cost{cost: cost, Enabled: (cost > 0)}
+}
+
+func (c *Cost) UpdateCost(cost int64) int64 {
+	c.cost += cost
+	return c.cost
 }
 
 func (c *Cost) GetCost() int64 {

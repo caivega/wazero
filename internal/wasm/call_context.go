@@ -14,10 +14,9 @@ import (
 // compile time check to ensure CallContext implements api.Module
 var _ api.Module = &CallContext{}
 
-func NewCallContext(s *Store, instance *ModuleInstance, sys *internalsys.Context, cost int64) *CallContext {
+func NewCallContext(s *Store, instance *ModuleInstance, sys *internalsys.Context) *CallContext {
 	zero := uint64(0)
-	costEnabled := (cost >= 0)
-	return &CallContext{memory: instance.Memory, module: instance, s: s, Sys: sys, Closed: &zero, Cost: cost, CostEnabled: costEnabled}
+	return &CallContext{memory: instance.Memory, module: instance, s: s, Sys: sys, Closed: &zero}
 }
 
 // CallContext is a function call context bound to a module. This is important as one module's functions can call
@@ -58,10 +57,6 @@ type CallContext struct {
 
 	// CodeCloser is non-nil when the code should be closed after this module.
 	CodeCloser api.Closer
-
-	// cost for runing wasm code
-	Cost        int64
-	CostEnabled bool
 }
 
 // FailIfClosed returns a sys.ExitError if CloseWithExitCode was called.

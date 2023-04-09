@@ -77,7 +77,7 @@ func RunTestEngine_MemoryGrowInRecursiveCall(t *testing.T, et EngineTester) {
 	typeIDs, err := s.GetFunctionTypeIDs(hm.TypeSection)
 	require.NoError(t, err)
 
-	_, err = s.Instantiate(testCtx, hm, hostModuleName, nil, typeIDs, -1)
+	_, err = s.Instantiate(testCtx, hm, hostModuleName, nil, typeIDs)
 	require.NoError(t, err)
 
 	m := &wasm.Module{
@@ -112,7 +112,7 @@ func RunTestEngine_MemoryGrowInRecursiveCall(t *testing.T, et EngineTester) {
 	typeIDs, err = s.GetFunctionTypeIDs(m.TypeSection)
 	require.NoError(t, err)
 
-	inst, err := s.Instantiate(testCtx, m, t.Name(), nil, typeIDs, -1)
+	inst, err := s.Instantiate(testCtx, m, t.Name(), nil, typeIDs)
 	require.NoError(t, err)
 
 	growFn = inst.Function(2)
@@ -826,7 +826,7 @@ func setupCallMemTests(t *testing.T, e wasm.Engine, readMem *wasm.Code, fnlf exp
 func linkModuleToEngine(module *wasm.ModuleInstance, me wasm.ModuleEngine) {
 	module.Engine = me // for Compiler, links the module to the module-engine compiled from it (moduleInstanceEngineOffset).
 	// callEngineModuleContextModuleInstanceAddressOffset
-	module.CallCtx = wasm.NewCallContext(nil, module, nil, -1)
+	module.CallCtx = wasm.NewCallContext(nil, module, nil)
 }
 
 func buildListeners(factory experimental.FunctionListenerFactory, m *wasm.Module) []experimental.FunctionListener {

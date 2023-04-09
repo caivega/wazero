@@ -184,10 +184,10 @@ func TestStore_Module(t *testing.T) {
 func newTestStore() (*Store, *ModuleInstance, *ModuleInstance) {
 	s := newStore()
 	m1 := &ModuleInstance{Name: "m1"}
-	m1.CallCtx = NewCallContext(s, m1, nil, -1)
+	m1.CallCtx = NewCallContext(s, m1, nil)
 
 	m2 := &ModuleInstance{Name: "m2"}
-	m2.CallCtx = NewCallContext(s, m2, nil, -1)
+	m2.CallCtx = NewCallContext(s, m2, nil)
 
 	node1 := &moduleListNode{name: m1.Name, module: m1}
 	node2 := &moduleListNode{name: m2.Name, module: m2, next: node1}

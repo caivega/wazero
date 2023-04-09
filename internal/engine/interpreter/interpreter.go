@@ -902,19 +902,14 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	cost := ctx.Value("cost").(*api.Cost)
 	for frame.pc < bodyLen {
 		op := body[frame.pc]
-		if callCtx.CostEnabled {
+		if cost.Enabled {
 			oc, ok := wazeroir.OperationCost[op.kind]
 			if !ok {
 				oc = 1
 			}
-			rc := callCtx.Cost - oc
+			rc := cost.UpdateCost(-oc)
 			if rc < 0 {
-				callCtx.Cost = rc
-				cost.SetCost(rc)
 				panic(wasmruntime.ErrRuntimeOutOfCost)
-			} else {
-				callCtx.Cost = rc
-				cost.SetCost(rc)
 			}
 		}
 		// TODO: add description of each operation/case

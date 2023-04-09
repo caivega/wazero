@@ -148,7 +148,6 @@ func NewRuntimeWithConfig(ctx context.Context, rConfig RuntimeConfig) Runtime {
 		storeCustomSections:   config.storeCustomSections,
 		closed:                &zero,
 		ensureTermination:     config.ensureTermination,
-		cost:                  config.cost,
 	}
 }
 
@@ -171,7 +170,6 @@ type runtime struct {
 	closed *uint64
 
 	ensureTermination bool
-	cost              int64
 }
 
 // Module implements Runtime.Module.
@@ -290,7 +288,7 @@ func (r *runtime) InstantiateModule(
 	}
 
 	// Instantiate the module.
-	mod, err = r.store.Instantiate(ctx, code.module, name, sysCtx, code.typeIDs, r.cost)
+	mod, err = r.store.Instantiate(ctx, code.module, name, sysCtx, code.typeIDs)
 	if err != nil {
 		// If there was an error, don't leak the compiled module.
 		if code.closeWithModule {
